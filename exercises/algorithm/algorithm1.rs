@@ -2,19 +2,19 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
+
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
 use std::vec::*;
 
 #[derive(Debug)]
-struct Node<T: Ord> {
+struct Node<T> {
     val: T,
     next: Option<NonNull<Node<T>>>,
 }
 
-impl<T: Ord> Node<T> {
+impl<T> Node<T> {
     fn new(t: T) -> Node<T> {
         Node {
             val: t,
@@ -23,19 +23,19 @@ impl<T: Ord> Node<T> {
     }
 }
 #[derive(Debug)]
-struct LinkedList<T: Ord> {
+struct LinkedList<T> {
     length: u32,
     start: Option<NonNull<Node<T>>>,
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T: Ord> Default for LinkedList<T> {
+impl<T> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T: Ord> LinkedList<T> {
+impl<T> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -69,47 +69,44 @@ impl<T: Ord> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-        let mut res = LinkedList::new();
-
-        // let mut c = &mut res.start;
-        let n = None;
-
-        // let mut node = NonNull::new(
-
-        // let mut r = &res.start;
-
-        // let la = list_a.length;
-        // let lb = list_b.length;
-        // let mut ia = 0;
-        // let mut ib = 0;
-
-        let mut na = list_a.start;
-        let mut nb = list_b.start;
-
-        while na.is_some() || nb.is_some() {
-            unsafe {
-                let a = &na.unwrap();
-                let b = &nb.unwrap();
-                if a.as_ref().val < b.as_ref().val {
-                    n = 
-
-                    *c = Some(*a);
-                    na = a.as_ref().next;
-                } else {
-                    *c = Some(*b);
-                    nb = b.as_ref().next;
+	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self 
+    where T: PartialOrd + Clone
+    {
+        let mut list_c = LinkedList::<T>::new();
+        let mut a_ptr = list_a.start;
+        let mut b_ptr = list_b.start;
+        loop {
+            match (a_ptr, b_ptr) {
+                (Some(a), Some(b)) => {
+                    let a_node = unsafe { a.as_ref() };
+                    let b_node = unsafe { b.as_ref() };
+                    if a_node.val < b_node.val {
+                        list_c.add(a_node.val.clone());
+                        a_ptr = a_node.next;
+                    } else {
+                        list_c.add(b_node.val.clone());
+                        b_ptr = b_node.next;
+                    }
                 }
+                
+                (Some(a), None) => {
+                    list_c.add(unsafe { a.as_ref().val.clone() });
+                    a_ptr = unsafe { a.as_ref().next };
+                }
+                
+                (None, Some(b)) => {
+                    list_c.add(unsafe { b.as_ref().val.clone() });
+                    b_ptr = unsafe { b.as_ref().next };
+                }
+                    
+                (None, None) => break
             }
         }
-
-        res
-	}
+        list_c
+    }
 }
 
-impl<T: Ord> Display for LinkedList<T>
+impl<T: Clone> Display for LinkedList<T>
 where
     T: Display,
 {
@@ -121,7 +118,7 @@ where
     }
 }
 
-impl<T: Ord> Display for Node<T>
+impl<T> Display for Node<T>
 where
     T: Display,
 {
