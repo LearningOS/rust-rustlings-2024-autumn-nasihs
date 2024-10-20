@@ -9,12 +9,12 @@ use std::ptr::NonNull;
 use std::vec::*;
 
 #[derive(Debug)]
-struct Node<T> {
+struct Node<T: Ord> {
     val: T,
     next: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Node<T> {
+impl<T: Ord> Node<T> {
     fn new(t: T) -> Node<T> {
         Node {
             val: t,
@@ -23,19 +23,19 @@ impl<T> Node<T> {
     }
 }
 #[derive(Debug)]
-struct LinkedList<T> {
+struct LinkedList<T: Ord> {
     length: u32,
     start: Option<NonNull<Node<T>>>,
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: Ord> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T: Ord> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -72,15 +72,44 @@ impl<T> LinkedList<T> {
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
 	{
 		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+        let mut res = LinkedList::new();
+
+        // let mut c = &mut res.start;
+        let n = None;
+
+        // let mut node = NonNull::new(
+
+        // let mut r = &res.start;
+
+        // let la = list_a.length;
+        // let lb = list_b.length;
+        // let mut ia = 0;
+        // let mut ib = 0;
+
+        let mut na = list_a.start;
+        let mut nb = list_b.start;
+
+        while na.is_some() || nb.is_some() {
+            unsafe {
+                let a = &na.unwrap();
+                let b = &nb.unwrap();
+                if a.as_ref().val < b.as_ref().val {
+                    n = 
+
+                    *c = Some(*a);
+                    na = a.as_ref().next;
+                } else {
+                    *c = Some(*b);
+                    nb = b.as_ref().next;
+                }
+            }
         }
+
+        res
 	}
 }
 
-impl<T> Display for LinkedList<T>
+impl<T: Ord> Display for LinkedList<T>
 where
     T: Display,
 {
@@ -92,7 +121,7 @@ where
     }
 }
 
-impl<T> Display for Node<T>
+impl<T: Ord> Display for Node<T>
 where
     T: Display,
 {

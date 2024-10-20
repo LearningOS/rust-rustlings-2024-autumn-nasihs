@@ -3,7 +3,8 @@
 	This question requires you to use a stack to achieve a bracket match
 */
 
-// I AM NOT DONE
+use std::collections::HashMap;
+
 #[derive(Debug)]
 struct Stack<T> {
 	size: usize,
@@ -32,7 +33,12 @@ impl<T> Stack<T> {
 	}
 	fn pop(&mut self) -> Option<T> {
 		// TODO
-		None
+		if 0 == self.size {
+			None
+		} else {
+			self.size -= 1;
+			self.data.pop()
+		}
 	}
 	fn peek(&self) -> Option<&T> {
 		if 0 == self.size {
@@ -102,7 +108,39 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 fn bracket_match(bracket: &str) -> bool
 {
 	//TODO
-	true
+	let lefts = ['(', '[', '{'];
+	let rights = [')', ']', '}'];
+
+	let map= HashMap::from([(')', '('), (']', '['), ('}', '{')]);
+
+	let mut stack = Stack::new();
+
+	for c in bracket.chars() {
+		if lefts.contains(&c) {
+			stack.push(c);
+		} else if rights.contains(&c) {
+			if let Some(e) = stack.pop() {
+				if *map.get(&c).unwrap() == e {
+					continue;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+	}
+
+    // for c in bracket.chars() {
+    //     if pairs.values().any(|&v| v == c) {
+    //         stack.push(c);
+    //     } else if let Some(&open) = pairs.get(&c) {
+    //         if stack.pop() != Some(open) {
+    //             return false;
+    //         }
+    //     }
+    // }
+	stack.is_empty()
 }
 
 #[cfg(test)]
